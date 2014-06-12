@@ -31,6 +31,8 @@ import org.apache.cordova.PluginResult;
 
 public class StreamPlayer extends CordovaPlugin {
     private static final String ASSETS = "file:///android_asset/";
+    private static final String YOUTUBE = "youtube.com";
+    private static final String USTREAM = "ustream.tv";
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
@@ -71,9 +73,10 @@ public class StreamPlayer extends CordovaPlugin {
 
         Intent intent = null;
         // Check to see if someone is trying to play a YouTube page.
-        if (url.contains("youtube.com")) {
+        if (url.contains(YOUTUBE)) {
             // If we don't do it this way you don't have the option for youtube
             if (isYouTubeInstalled()) {
+                uri = Uri.parse(url);
                 uri = Uri.parse("vnd.youtube:" + uri.getQueryParameter("v"));
                 intent = new Intent(Intent.ACTION_VIEW, uri);
                 cordova.getActivity().startActivity(intent);
@@ -95,7 +98,7 @@ public class StreamPlayer extends CordovaPlugin {
                     })
                     .show();
             }
-        } else if (url.contains("ustream.tv")) {
+        } else if (url.contains(USTREAM)) {
             if (isUstreamInstalled()) {
                 intent = new Intent(Intent.ACTION_VIEW);
                 uri = Uri.parse(url.replace("channel","mobile/view/channel"));
