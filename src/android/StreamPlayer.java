@@ -6,7 +6,7 @@
  * Copyright (c) 2011, IBM Corporation
  */
 
-package com.phonegap.plugins.videoplayer;
+package com.phonegap.plugins.streamplayer;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,7 +27,7 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 
-public class VideoPlayer extends CordovaPlugin {
+public class StreamPlayer extends CordovaPlugin {
     private static final String YOU_TUBE = "youtube.com";
     private static final String ASSETS = "file:///android_asset/";
 
@@ -38,8 +38,8 @@ public class VideoPlayer extends CordovaPlugin {
         String result = "";
 
         try {
-            if (action.equals("playVideo")) {
-                playVideo(args.getString(0));
+            if (action.equals("playStream")) {
+                playStream(args.getString(0));
             }
             else {
                 status = PluginResult.Status.INVALID_ACTION;
@@ -53,7 +53,7 @@ public class VideoPlayer extends CordovaPlugin {
         return true;
     }
 
-    private void playVideo(String url) throws IOException {
+    private void playStream(String url) throws IOException {
 
     	if (url.contains("bit.ly/") || url.contains("goo.gl/") || url.contains("tinyurl.com/") || url.contains("youtu.be/")) {
 			//support for google / bitly / tinyurl / youtube shortens
@@ -94,13 +94,17 @@ public class VideoPlayer extends CordovaPlugin {
             // change uri to be to the new file in internal storage
             uri = Uri.parse("file://" + this.cordova.getActivity().getFilesDir() + "/" + filename);
 
-            // Display video player
+            // Display stream player
             intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(uri, "video/*");
         } else {
-            // Display video player
-            intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(uri, "video/*");
+            if (isVLCInstalled()) {
+                intent = new Intent(Intent.ACTION_VIEW, uri);
+                intent.setPackage("org.videolan.vlc.betav7neon");
+            } else {
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("market://details?id=org.videolan.vlc.betav7neon"));
+            }
         }
 
         this.cordova.getActivity().startActivity(intent);
