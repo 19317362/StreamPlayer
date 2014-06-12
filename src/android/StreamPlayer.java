@@ -30,7 +30,6 @@ import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 
 public class StreamPlayer extends CordovaPlugin {
-    private static final String YOU_TUBE = "youtube.com";
     private static final String ASSETS = "file:///android_asset/";
 
     @Override
@@ -68,21 +67,60 @@ public class StreamPlayer extends CordovaPlugin {
         }
         
         // Create URI
-        Uri uri = Uri.parse(url);
+        Uri uri = null;
 
         Intent intent = null;
         // Check to see if someone is trying to play a YouTube page.
-        if (url.contains(YOU_TUBE)) {
+        if (url.contains("youtube.com")) {
             // If we don't do it this way you don't have the option for youtube
-            uri = Uri.parse("vnd.youtube:" + uri.getQueryParameter("v"));
             if (isYouTubeInstalled()) {
+                uri = Uri.parse("vnd.youtube:" + uri.getQueryParameter("v"));
                 intent = new Intent(Intent.ACTION_VIEW, uri);
+                cordova.getActivity().startActivity(intent);
             } else {
-                intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("market://details?id=com.google.android.youtube"));
+                new AlertDialog.Builder(this.cordova.getActivity())
+                    .setTitle("安裝 Youtube Player")
+                    .setMessage("觀看直播,\n需安裝串流影音播放器（Youtube Player）,\n請依指示完成安裝後,\n返回inLiveTW觀看直播.")
+                    .setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                        }
+                    })
+                    .setNegativeButton("安裝", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            Intent intent = null;
+                            intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse("market://details?id=com.google.android.youtube"));
+                            cordova.getActivity().startActivity(intent);
+                        }
+                    })
+                    .show();
             }
-            this.cordova.getActivity().startActivity(intent);
-        } else if(url.contains(ASSETS)) {
+        } else if (url.contains("ustream.tv")) {
+            if (isUstreamInstalled()) {
+                intent = new Intent(Intent.ACTION_VIEW);
+                uri = Uri.parse(url.replace("channel","mobile/view/channel"));
+                intent.setData(uri);
+                intent.setPackage("tv.ustream.ustream");
+                cordova.getActivity().startActivity(intent);
+            } else {
+                new AlertDialog.Builder(this.cordova.getActivity())
+                    .setTitle("安裝 Ustream Player")
+                    .setMessage("觀看直播,\n需安裝串流影音播放器（Ustream Player）,\n請依指示完成安裝後,\n返回inLiveTW觀看直播.")
+                    .setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                        }
+                    })
+                    .setNegativeButton("安裝", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            Intent intent = null;
+                            intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse("market://details?id=tv.ustream.ustream"));
+                            cordova.getActivity().startActivity(intent);
+                        }
+                    })
+                    .show();
+            }
+        } else if (url.contains(ASSETS)) {
             // get file path in assets folder
             String filepath = url.replace(ASSETS, "");
             // get actual filename from path as command to write to internal storage doesn't like folders
@@ -94,15 +132,13 @@ public class StreamPlayer extends CordovaPlugin {
                 this.copy(filepath, filename);
             }
 
-            // change uri to be to the new file in internal storage
-            uri = Uri.parse("file://" + this.cordova.getActivity().getFilesDir() + "/" + filename);
-
-            // Display stream player
             intent = new Intent(Intent.ACTION_VIEW);
+            uri = Uri.parse("file://" + this.cordova.getActivity().getFilesDir() + "/" + filename);
             intent.setDataAndType(uri, "video/*");
-            this.cordova.getActivity().startActivity(intent);
+            cordova.getActivity().startActivity(intent);
         } else {
             if (isVLCInstalled()) {
+                uri = Uri.parse(url);
                 intent = new Intent(Intent.ACTION_VIEW, uri);
                 intent.setPackage("org.videolan.vlc.betav7neon");
                 this.cordova.getActivity().startActivity(intent);
@@ -153,6 +189,17 @@ public class StreamPlayer extends CordovaPlugin {
             return false;
         }   
     }
+    
+    private boolean isUstreamInstalled() {
+        PackageManager pm = this.cordova.getActivity().getPackageManager();
+        try {
+            pm.getPackageInfo("tv.ustream.ustream", PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }   
+    }
+
     private boolean isYouTubeInstalled() {
         PackageManager pm = this.cordova.getActivity().getPackageManager();
         try {
