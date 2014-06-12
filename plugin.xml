@@ -21,7 +21,7 @@
 
 		<config-file target="res/xml/config.xml" parent="/*">
 			<feature name="StreamPlayer">
-				<param name="android-package" value="com.phonegap.plugins.Streamplayer.StreamPlayer" />
+				<param name="android-package" value="com.phonegap.plugins.streamplayer.StreamPlayer" />
 			</feature>
 		</config-file>
 	</platform>    
