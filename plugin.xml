@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?><plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	id="com.phonegap.plugins.videoplayer"
+	id="com.phonegap.plugins.streamplayer"
 	version="1.0">
 
-	<name>VideoPlayer</name>
-	<description>VideoPlayer for Cordova 3.0</description>
+	<name>StreamPlayer</name>
+	<description>StreamPlayer for Cordova 3.0</description>
 	<license>MIT</license>
 
 	<engines>
 		<engine name="cordova" version=">=3.0.0" />
 	</engines>    
 
-	<js-module src="www/videoplayer.js" name="VideoPlayer">
-		<clobbers target="cordova.plugins.videoPlayer" />
+	<js-module src="www/streamplayer.js" name="StreamPlayer">
+		<clobbers target="cordova.plugins.streamPlayer" />
 	</js-module>
 
 	<!-- android -->
 	<platform name="android">
-		<source-file src="src/android/VideoPlayer.java" target-dir="src/com/phonegap/plugins/videoplayer" />
+		<source-file src="src/android/StreamPlayer.java" target-dir="src/com/phonegap/plugins/streamlayer" />
 
 		<config-file target="res/xml/config.xml" parent="/*">
-			<feature name="VideoPlayer">
-				<param name="android-package" value="com.phonegap.plugins.videoplayer.VideoPlayer" />
+			<feature name="StreamPlayer">
+				<param name="android-package" value="com.phonegap.plugins.Streamplayer.StreamPlayer" />
 			</feature>
 		</config-file>
 	</platform>    
