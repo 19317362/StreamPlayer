@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -56,15 +57,15 @@ public class StreamPlayer extends CordovaPlugin {
 
     private void playStream(String url) throws IOException {
 
-    	if (url.contains("bit.ly/") || url.contains("goo.gl/") || url.contains("tinyurl.com/") || url.contains("youtu.be/")) {
-			//support for google / bitly / tinyurl / youtube shortens
-			URLConnection con = new URL(url).openConnection();
-			con.connect();
-			InputStream is = con.getInputStream();
-			//new redirected url
-	        url = con.getURL().toString();
-			is.close();
-		}
+        if (url.contains("bit.ly/") || url.contains("goo.gl/") || url.contains("tinyurl.com/") || url.contains("youtu.be/")) {
+            //support for google / bitly / tinyurl / youtube shortens
+            URLConnection con = new URL(url).openConnection();
+            con.connect();
+            InputStream is = con.getInputStream();
+            //new redirected url
+            url = con.getURL().toString();
+            is.close();
+        }
         
         // Create URI
         Uri uri = Uri.parse(url);
@@ -80,6 +81,7 @@ public class StreamPlayer extends CordovaPlugin {
                 intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse("market://details?id=com.google.android.youtube"));
             }
+            this.cordova.getActivity().startActivity(intent);
         } else if(url.contains(ASSETS)) {
             // get file path in assets folder
             String filepath = url.replace(ASSETS, "");
@@ -98,26 +100,32 @@ public class StreamPlayer extends CordovaPlugin {
             // Display stream player
             intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(uri, "video/*");
+            this.cordova.getActivity().startActivity(intent);
         } else {
             if (isVLCInstalled()) {
                 intent = new Intent(Intent.ACTION_VIEW, uri);
                 intent.setPackage("org.videolan.vlc.betav7neon");
+                this.cordova.getActivity().startActivity(intent);
             } else {
-                Builder intAlertDialog = new AlertDialog.Builder(this);
-                intAlertDialog.setTitle("安裝 VLC Player");
-                intAlertDialog.setMessage("播放串流影音需安裝VLC Player, \n請依指示完成安裝後, 返回inLiveTW收看直播");
-                DialogInterface.OnClickListener OkClick = new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int which) {
-                        intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse("market://details?id=org.videolan.vlc.betav7neon"));
-                    }
-                };
-                intAlertDialog.setNeutralButton("安裝", OkClick);
-                intAlertDialog.show();
+                new AlertDialog.Builder(this.cordova.getActivity())
+                    .setTitle("安裝 VLC Player")
+                    .setMessage("觀看直播,\n需安裝串流影音播放器（VLC Player）,\n請依指示完成安裝後,\n返回inLiveTW觀看直播.")
+                    .setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                        }
+                    })
+                    .setNegativeButton("安裝", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            Intent intent = null;
+                            intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse("market://details?id=org.videolan.vlc.betav7neon"));
+                            cordova.getActivity().startActivity(intent);
+                        }
+                    })
+                    .show();
             }
         }
 
-        this.cordova.getActivity().startActivity(intent);
     }
 
     private void copy(String fileFrom, String fileTo) throws IOException {
