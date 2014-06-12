@@ -102,8 +102,17 @@ public class StreamPlayer extends CordovaPlugin {
                 intent = new Intent(Intent.ACTION_VIEW, uri);
                 intent.setPackage("org.videolan.vlc.betav7neon");
             } else {
-                intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("market://details?id=org.videolan.vlc.betav7neon"));
+                Builder MyAlertDialog = new AlertDialog.Builder(this);
+                MyAlertDialog.setTitle("安裝 VLC Player");
+                MyAlertDialog.setMessage("播放串流影音需安裝VLC Player, \n請依指示完成安裝後, 返回inLiveTW收看直播");
+                DialogInterface.OnClickListener OkClick = new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which) {
+                        intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse("market://details?id=org.videolan.vlc.betav7neon"));
+                    }
+                };
+                MyAlertDialog.setNeutralButton("安裝", OkClick);
+                MyAlertDialog.show();
             }
         }
 
