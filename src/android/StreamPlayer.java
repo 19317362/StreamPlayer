@@ -126,6 +126,15 @@ public class StreamPlayer extends CordovaPlugin {
         out.close();
     }
     
+    private boolean isVLCInstalled() {
+        PackageManager pm = this.cordova.getActivity().getPackageManager();
+        try {
+            pm.getPackageInfo("org.videolan.vlc.betav7neon", PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }   
+    }
     private boolean isYouTubeInstalled() {
         PackageManager pm = this.cordova.getActivity().getPackageManager();
         try {
