@@ -1,6 +1,7 @@
-#VideoPlayer plugin for Android Cordova 3.0 
+#StreamPlayer plugin for Android Cordova 3.0 
 
-The video player allows you to display videos from your Android Cordova application. Based in https://github.com/macdonst/VideoPlayer for phonegap < 2.2 version.
+The Stream player allows you to display stream from your Android Cordova application. Based in 
+
 
 This command fires an Intent to have your devices video player show the video.
 
