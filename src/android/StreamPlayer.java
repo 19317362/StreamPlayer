@@ -6,7 +6,7 @@
  * Copyright (c) 2011, IBM Corporation
  */
 
-package com.phonegap.plugins.streamplayer;
+package com.plugin.streamplayer;
 
 import java.io.File;
 import java.io.FileOutputStream;

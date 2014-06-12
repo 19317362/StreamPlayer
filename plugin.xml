@@ -17,11 +17,11 @@
 
 	<!-- android -->
 	<platform name="android">
-		<source-file src="src/android/StreamPlayer.java" target-dir="src/com/phonegap/plugins/streamlayer" />
+		<source-file src="src/android/StreamPlayer.java" target-dir="src/com/plugin/streamplayer" />
 
 		<config-file target="res/xml/config.xml" parent="/*">
 			<feature name="StreamPlayer">
-				<param name="android-package" value="com.phonegap.plugins.streamplayer.StreamPlayer" />
+				<param name="android-package" value="com.plugin.streamplayer.StreamPlayer" />
 			</feature>
 		</config-file>
 	</platform>    
